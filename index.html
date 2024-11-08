@@ -57,19 +57,14 @@
     <button onclick="sendMessage()">Send</button>
 
     <script>
-        // Fungsi untuk mengirim pesan
         function sendMessage() {
             const userInput = document.getElementById('user-input').value.trim();
             if (!userInput) return;
 
-            // Menampilkan pesan pengguna di chat
             appendMessage('You: ' + userInput, 'user-message');
-
-            // Mengosongkan input setelah dikirim
             document.getElementById('user-input').value = '';
 
-            // Mengirim pesan ke server
-            fetch('chatgpt_backend.php', {
+            fetch('https://your-app-name.herokuapp.com/chatgpt_backend.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -90,13 +85,12 @@
             });
         }
 
-        // Fungsi untuk menambahkan pesan ke dalam chat
         function appendMessage(message, className) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', className);
             messageDiv.textContent = message;
             document.getElementById('chat-container').appendChild(messageDiv);
-            document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight; // Meng-scroll ke bawah
+            document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight;
         }
     </script>
 </body>
