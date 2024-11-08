@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with ChatGPT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        #chat-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 400px;
+            height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            background-color: white;
+        }
+        #user-input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .user-message {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+        .bot-message {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h2>Chat with ChatGPT</h2>
+    <div id="chat-container"></div>
+    <textarea id="user-input" placeholder="Type your message here..." rows="3"></textarea><br>
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        // Fungsi untuk mengirim pesan
+        function sendMessage() {
+            const userInput = document.getElementById('user-input').value.trim();
+            if (!userInput) return;
+
+            // Menampilkan pesan pengguna di chat
+            appendMessage('You: ' + userInput, 'user-message');
+
+            // Mengosongkan input setelah dikirim
+            document.getElementById('user-input').value = '';
+
+            // Mengirim pesan ke server
+            fetch('chatgpt_backend.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.response) {
+                    appendMessage('ChatGPT: ' + data.response, 'bot-message');
+                } else {
+                    appendMessage('Error: Could not get response from ChatGPT. Please try again later.', 'bot-message');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                appendMessage('Error: Could not get response from ChatGPT. Please try again later.', 'bot-message');
+            });
+        }
+
+        // Fungsi untuk menambahkan pesan ke dalam chat
+        function appendMessage(message, className) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', className);
+            messageDiv.textContent = message;
+            document.getElementById('chat-container').appendChild(messageDiv);
+            document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight; // Meng-scroll ke bawah
+        }
+    </script>
+</body>
+</html>
